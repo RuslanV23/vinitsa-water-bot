@@ -1,0 +1,61 @@
+name: Water alerts — Vinitsa
+
+on:
+  schedule:
+    # Каждые 20 минут, со смещением от начала часа для снижения очередей.
+    - cron: '7,27,47 * * * *'
+  workflow_dispatch:
+    inputs:
+      test_message:
+        description: 'Отправить только тестовое сообщение (без проверки сайта)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: water-alerts
+  cancel-in-progress: false
+
+jobs:
+  check:
+    # История общая; ручные запуски допускаются только из основной ветки.
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download bot
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Restore alert history
+        if: inputs.test_message != true
+        run: node scripts/state-store.js restore
+
+      - name: Check ViK Varna
+        if: inputs.test_message != true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: npm start
+
+      - name: Send test message
+        if: inputs.test_message == true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: npm run test-message
+
+      - name: Save alert history
+        # При частичном сбое сохранить уже доставленные сообщения, чтобы не повторять их.
+        if: always() && inputs.test_message != true
+        run: node scripts/state-store.js save

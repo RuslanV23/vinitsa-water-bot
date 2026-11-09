@@ -1,0 +1,16 @@
+{
+  "name": "varna-vinitsa-water-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Уведомления об отключениях воды в Винице из официальных объявлений ВиК Варна",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/index.js",
+    "preview": "node src/index.js --dry-run",
+    "test-message": "node --env-file-if-exists=.env src/index.js --test-message",
+    "setup": "node scripts/setup.js",
+    "test": "node --test"
+  },
+  "dependencies": { "cheerio": "1.1.2" }
+}
