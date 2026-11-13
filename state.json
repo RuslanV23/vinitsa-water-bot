@@ -384,12 +384,32 @@
       "date": "2026-11-12"
     },
     "https://vikvarna.com/bg/messages/breakdown/17830.html": {
-      "hash": "edf74f4d4f501953ae168337b97124d652188303ed4911d652ccbd58d48fb1b6",
+      "hash": "3981146d12a26710153b25f15ed6abc3704c1903c099b94913e58cb659a6dc2b",
       "relevant": false,
       "date": "2026-11-13"
     },
     "https://vikvarna.com/bg/messages/breakdown/17831.html": {
       "hash": "dbda3c46ba9d3d7cd4399291a249802522fbae4275cf3ab7a8b01bb1297e917b",
+      "relevant": false,
+      "date": "2026-11-13"
+    },
+    "https://vikvarna.com/bg/messages/breakdown/17832.html": {
+      "hash": "ca8a216cf1714bba8c12afdc708f76387104a46eebd8179bdc7d17ce3a2fb7da",
+      "relevant": false,
+      "date": "2026-11-13"
+    },
+    "https://vikvarna.com/bg/messages/breakdown/17833.html": {
+      "hash": "cafd1f86d35f0051ebb8cd11997e0b4d5da15502e2536b536494a0913a77a0d8",
+      "relevant": false,
+      "date": "2026-11-13"
+    },
+    "https://vikvarna.com/bg/messages/breakdown/17834.html": {
+      "hash": "a6213110339506aa13113ec7e6733e278479ba26ca2850e5c76b382b265dab29",
+      "relevant": false,
+      "date": "2026-11-13"
+    },
+    "https://vikvarna.com/bg/messages/breakdown/17835.html": {
+      "hash": "3bb843b79f8f35ad38e5c1bbd9843de9a5faf439663fd7798e32ea98231fcba6",
       "relevant": false,
       "date": "2026-11-13"
     }
