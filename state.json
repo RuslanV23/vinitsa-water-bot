@@ -684,12 +684,22 @@
       "date": "2026-11-21"
     },
     "https://vikvarna.com/bg/messages/breakdown/17890.html": {
-      "hash": "a25a3299f788400a251a6a116b31a0ae06d8e52ca293a8522cc57e6f09a58b0b",
+      "hash": "d2d8b87c63a627286d9078aef41e16c763a470d5d683f13ec94dd1539fb75b3a",
       "relevant": false,
       "date": "2026-11-22"
     },
     "https://vikvarna.com/bg/messages/breakdown/17891.html": {
-      "hash": "d309d72c8f4b922c74d3436d84940ee04ed527cbd6987258c818093b731df1c0",
+      "hash": "7d2f9c1d7a7be302356084764ff6f1b7c256afe098444406ee4bda928a692e8c",
+      "relevant": false,
+      "date": "2026-11-22"
+    },
+    "https://vikvarna.com/bg/messages/breakdown/17892.html": {
+      "hash": "c6a450a90eade02dffd93f763e05449eef1512d3fe8bdd4b518aef311a987e6a",
+      "relevant": true,
+      "date": "2026-11-22"
+    },
+    "https://vikvarna.com/bg/messages/breakdown/17893.html": {
+      "hash": "ef92c8817bfb7a9dcfb8aca04449fe3687057d945097a71684044249d1a3b3e4",
       "relevant": false,
       "date": "2026-11-22"
     }
