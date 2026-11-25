@@ -862,6 +862,11 @@
       "hash": "7b678ae5e27e1ca96d618c2f6f4a7ed5ebd09b76cef3842edc5a94ae4a965ca8",
       "relevant": true,
       "date": "2026-11-25"
+    },
+    "https://vikvarna.com/bg/messages/breakdown/17926.html": {
+      "hash": "56557ee97dfb26b7a74037ef8275bd168c4172d671a6e02e297ca69d3eef57b8",
+      "relevant": false,
+      "date": "2026-11-25"
     }
   }
 }
