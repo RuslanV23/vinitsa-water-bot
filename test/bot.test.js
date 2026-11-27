@@ -76,6 +76,29 @@ test('Чтение всех трёх страниц и повторная про
   assert.ok(requests.some((target) => target.includes('page=3')));
 });
 
+test('Пустой шаблон ВиК пропускается только для объявления из истории вне списка', async () => {
+  const removed = url.replace('123', '124');
+  const broken = url.replace('123', '125');
+  const emptyArticle = '<div id="main_content"><h1>Съобщения за аварии</h1><div class="clear"></div><div class="paging"></div></div>';
+  const emptyList = '<div id="main_content"><h1>Планови ремонти</h1><p>Няма намерени съобщения</p></div>';
+  const result = await collectArticles({
+    knownUrls: [url, `${removed}?region_id=15`, broken],
+    wait: async () => {},
+    getHtml: async (target) => {
+      if (target.includes('type=breakdown')) return listing;
+      if (target.includes('type=repair')) return emptyList;
+      if (target === broken) return emptyArticle.replace('<div class="paging">', '<div class="view">');
+      return emptyArticle;
+    },
+  });
+  assert.deepEqual(result.articles, []);
+  assert.deepEqual(result.warnings, [`ВиК больше не показывает объявление из истории: ${removed}`]);
+  assert.deepEqual(result.errors, [
+    `Не удалось прочитать полный текст: ${url}`,
+    `Не удалось прочитать полный текст: ${broken}`,
+  ]);
+});
+
 test('При первом запуске архив сохраняется без рассылки, сегодняшнее отправляется один раз', async () => {
   const h = harness();
   const old = { ...article, url: url.replace('123', '122'), date: '2026-11-08' };

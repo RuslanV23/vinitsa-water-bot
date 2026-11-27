@@ -5,6 +5,10 @@ import { setTimeout as sleep } from 'node:timers/promises';
 export const ORIGIN = 'https://vikvarna.com';
 export const SECTIONS = ['breakdown', 'repair'];
 export const PAGES_PER_SECTION = 3;
+const SECTION_HEADINGS = {
+  breakdown: 'Съобщения за аварии',
+  repair: 'Съобщения за планови ремонти',
+};
 
 export function normalize(text) {
   return text.normalize('NFKC').replace(/[\s\u200b\ufeff]+/gu, ' ').trim();
@@ -61,17 +65,24 @@ export function parseListing(html) {
   return items;
 }
 
-export function parseArticle(html, url) {
+export function parseArticle(html, url, { allowMissing = false } = {}) {
   const $ = load(html);
   const main = $('#main_content');
   const title = normalize(main.find('h1').first().text());
-  const body = main.find('.view').first().clone();
+  const view = main.find('.view').first();
+  const date = main.find('.list-item-date').first();
+  if (allowMissing && !view.length && !date.length && main.children('.paging').length) {
+    const section = articleUrl(url).match(/\/(breakdown|repair)\//u)[1];
+    // ВиК возвращает пустой шаблон раздела с HTTP 200 для отсутствующего объявления.
+    if (title === SECTION_HEADINGS[section] && normalize(main.text()) === title) return null;
+  }
+  const body = view.clone();
   body.find('script, style, .link-subscribe, .clear').remove();
   body.find('br').replaceWith('\n');
   body.find('p, div, li').append('\n');
   const text = body.text().split('\n').map(normalize).filter(Boolean).join('\n');
   if (!title || !text) throw new Error(`Не удалось прочитать полный текст: ${url}`);
-  return { url: articleUrl(url), title, date: parseDate(main.find('.list-item-date').first().text()), text };
+  return { url: articleUrl(url), title, date: parseDate(date.text()), text };
 }
 
 export async function fetchHtml(url, { fetchImpl = fetch, wait = sleep } = {}) {
@@ -91,8 +102,9 @@ export async function fetchHtml(url, { fetchImpl = fetch, wait = sleep } = {}) {
 }
 
 export async function collectArticles({ getHtml = fetchHtml, wait = sleep, knownUrls = [] } = {}) {
-  const urls = new Set();
+  const listedUrls = new Set();
   const errors = [];
+  const warnings = [];
   // Читаем обе категории и несколько страниц: Виница может отсутствовать в кратком анонсе.
   for (const type of SECTIONS) {
     for (let page = 1; page <= PAGES_PER_SECTION; page++) {
@@ -102,18 +114,21 @@ export async function collectArticles({ getHtml = fetchHtml, wait = sleep, known
       catch (error) { errors.push(error.message); break; }
       let added = 0;
       for (const item of items) {
-        if (!urls.has(item.url)) { urls.add(item.url); added++; }
+        if (!listedUrls.has(item.url)) { listedUrls.add(item.url); added++; }
       }
       if (!added || items.length < 10) break;
       await wait(200);
     }
   }
-  for (const url of knownUrls) urls.add(articleUrl(url));
+  const urls = new Set([...listedUrls, ...Array.from(knownUrls, articleUrl)]);
   const articles = [];
   for (const url of urls) {
-    try { articles.push(parseArticle(await getHtml(url), url)); }
-    catch (error) { errors.push(error.message); }
+    try {
+      const article = parseArticle(await getHtml(url), url, { allowMissing: !listedUrls.has(url) });
+      if (article) articles.push(article);
+      else warnings.push(`ВиК больше не показывает объявление из истории: ${url}`);
+    } catch (error) { errors.push(error.message); }
     await wait(200);
   }
-  return { articles, errors };
+  return { articles, errors, warnings };
 }

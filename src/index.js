@@ -21,7 +21,8 @@ async function main() {
   cutoff.setUTCDate(cutoff.getUTCDate() - 14);
   const knownUrls = state ? Object.entries(state.entries)
     .filter(([, item]) => item.relevant && item.date >= sofiaDate(cutoff)).map(([url]) => url) : [];
-  const { articles, errors } = await collectArticles({ knownUrls });
+  const { articles, errors, warnings } = await collectArticles({ knownUrls });
+  for (const warning of warnings) console.warn(`Предупреждение: ${warning}`);
   const matching = articles.filter((article) => isVinitsa(`${article.title} ${article.text}`));
   console.log(`Прочитано полных объявлений: ${articles.length}. Упоминаний Виницы: ${matching.length}.`);
   if (dryRun) {
