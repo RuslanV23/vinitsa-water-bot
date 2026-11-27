@@ -3,7 +3,7 @@ name: Water alerts — Vinitsa
 on:
   schedule:
     # Каждые 20 минут, со смещением от начала часа для снижения очередей.
-    - cron: '7,27,47 * * * *'
+    - cron: '17 * * * *'
   workflow_dispatch:
     inputs:
       test_message:
